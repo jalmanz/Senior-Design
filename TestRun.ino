@@ -47,7 +47,7 @@ void stopIfFault()
 }
 
 void setup() {
-  pinMode(anPin, INPUT);
+  	pinMode(anPin, INPUT);
 	Serial.begin(9600);  // This opens up a serial connection to shoot the results back to the PC console
 	md.init();           // Initializes the motor shield.
 }
