@@ -86,10 +86,10 @@ void loop() {
 	// If an object gets within 20 inches, the car will stop and rotate left till nothing is in the way.
 	if(inches < limit) {
 		md.setBrakes(400,400);   // Stops.
-		md.setSpeeds(100, 100);  // Rotates.
+		md.setSpeeds(100, -100);  // Rotates.
 		stopIfFault();
 	}else{
-		md.setSpeeds(100, -100); // Continue forward.
+		md.setSpeeds(100, 100); // Continue forward.
 		stopIfFault();
 	}
 	sum = 0;
