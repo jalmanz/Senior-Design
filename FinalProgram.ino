@@ -37,26 +37,25 @@ const int overridePin    = 51; // Digital pin 48 used for manual override.
 const int sonar          = 1;  // Analog pin 1 for reading in the analog voltage from the MaxSonar device.
 
 // Variables used for the sonar and collision sensor function.
-long anVolt, inches, cm, i;
-int collisionDetectState = 0;
-const long int limit     = 10;
-int overrideState        = 0;
-int avgrange             = 60;
-int sum                  = 0;
+long anVolt, inches, cm, i;    // Used in the averaging and calculation of distance from sonar sensor to object.
+int collisionDetectState = 0;  // The state of the collision detecting switches.
+const long int limit     = 10; // Limit for the distance from an obstacle in which the car will stop.
+int overrideState        = 0;  // State of the override switch.
+int avgrange             = 60; // Number of readings the sonar sensor averages for distance.
+int sum                  = 0;  // Sum of inches for sonar sensing average.
 
-// Variables for reading the stop and collision system switch status.
-int collisionSwitchState = 0;
-int stopSwitchState      = 0;  
+// Variable for reading the stop switch status.
+int stopSwitchState = 0;  
 
 // Variables used in the PID equation.
-int lastError = 0;
-int position  = 0;
-int error     = 0;
+int lastError = 0; // The error that was calculated in the previous iteration of the main loop. 
+int position  = 0; // Position of the line relative to the sensors.
+int error     = 0; // How far the line is from the center sensor in the sensor array.
 
 // Variables for motor speeds.
-int motorSpeed = 0;
-int m1Speed    = 0;
-int m2Speed    = 0;
+int motorSpeed = 0;  // The speed that must be added or subtracted from each motor to return to the center of the line.
+int m1Speed    = 0;  // Speed of motor 1.
+int m2Speed    = 0;  // Speed of motor 2.
 
 // Initializes the LCD module in serial mode
 TKLCD_Serial lcd = TKLCD_Serial();
@@ -79,7 +78,7 @@ void setup() {
         lcd.setContrast(255);
 	lcd.setBrightness(255);
 
-	// Checks if the stop switch is toggled.
+	// Checks if the stop switch is ON or OFF.
 	checkStopSwitch();
 	
 	// Runs the calibration.
@@ -89,7 +88,7 @@ void setup() {
 // Main program that is looped.
 void loop() {  
 	
-	// Checks if the stop switch is toggled.
+	// Checks if the stop switch is ON or OFF.
 	checkStopSwitch();
 
         // Checks if there are any obstacles in the way of the car.
@@ -104,7 +103,7 @@ void loop() {
   	int position = qtrrc.readLine(sensors);
   	unsigned char i;
  
-  	error      = position - 3000;
+  	error      = position - 3000;                        // How far the line is away from the middle sensor.
   	motorSpeed = KP * error + KD * (error - lastError);  // PID equation.
         lastError  = error;
  
@@ -134,7 +133,7 @@ void calibrate() {
 	// Indicates on the LCD screen that the car is in calibration mode.
         lcd.clear();
         lcd.print("Calibrating...");
-	delay(1000);
+	delay(1000);  // Wait 1 second.
 	
 	// The car spins in a circle to automatically calibrate.
 	md.setSpeeds(200, -200);
@@ -153,11 +152,11 @@ void calibrate() {
 	return;
 }
 
-// Checks if the stop switch has been activated.
+// Checks whether the stop switch is ON or OFF.
 void checkStopSwitch() {
 	// Read the state of the stop switch value.
 	stopSwitchState = digitalRead(stopSwitchPin);
-	// Checks if the switch is toggled.
+	// Checks if the switch is ON.
 	// If it is, the state is LOW.
 	if(stopSwitchState != HIGH) {
 		lcd.clear();
@@ -219,7 +218,7 @@ void checkCollision() {
 		md.setBrakes(400, 400);
 		
 		// This section is used for the hypothetical driver to wait for the obstacle to be moved,
-		// then provide input for the car to being moving again.
+		// then provide input for the car to begin moving again.
 		overrideState = digitalRead(overridePin);
 		if(overrideState != HIGH) {
 			lcd.clear();
