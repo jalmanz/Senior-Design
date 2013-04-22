@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #define KP 0.2        // Proportial gain.
 #define KD 15  	      // Differential gain.
 
-
 // Variables for pins on the arduino board.
 const int stopSwitchPin  = 53; // Digital pin 53 used the stop switch pin.
 const int collisionPin   = 49; // Digital pin 49 used for the collision detection.
