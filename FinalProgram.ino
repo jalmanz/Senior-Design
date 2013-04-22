@@ -31,10 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 
 // Variables for pins on the arduino board.
-const int sonar          = 1;  // Analog pin 1 for reading in the analog voltage from the MaxSonar device.
 const int stopSwitchPin  = 53; // Digital pin 53 used the stop switch pin.
 const int collisionPin   = 49; // Digital pin 49 used for the collision detection.
 const int overridePin    = 51; // Digital pin 48 used for manual override.
+const int sonar          = 1;  // Analog pin 1 for reading in the analog voltage from the MaxSonar device.
 
 // Variables used for the sonar and collision sensor function.
 long anVolt, inches, cm, i;
@@ -44,7 +44,7 @@ int overrideState        = 0;
 int avgrange             = 60;
 int sum                  = 0;
 
-// Variable for reading the stop and collision system switch status.
+// Variables for reading the stop and collision system switch status.
 int collisionSwitchState = 0;
 int stopSwitchState      = 0;  
 
@@ -120,7 +120,7 @@ void loop() {
     
 	// Makes sure the motor speeds stay at or below the maximum.
   	if(m1Speed > M_MAX)
-    	m1Speed = M_MAX;
+    	        m1Speed = M_MAX;
   	if(m2Speed > M_MAX)
    		m2Speed = M_MAX;
  
@@ -140,7 +140,7 @@ void calibrate() {
 	md.setSpeeds(200, -200);
 	// Calibration lasts about 10 seconds.
         for (i = 0; i < 50; i++) {
-		qtrrc.calibrate(); // Reads all sensors 10 times at 2500 us per read (i.e. ~25 ms per call).
+		qtrrc.calibrate(); // Reads all sensors 50 times at 2500 us per read (i.e. ~25 ms per call).
     	        delay(5);
   	}
 	md.setBrakes(400, 400);
