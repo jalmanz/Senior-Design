@@ -166,7 +166,7 @@ void printCarStatus(int status) {
 // Runs the calibration mode.
 void calibrate() {
 	// Indicates on the LCD screen that the car is in calibration mode.
-    currentCarStatus = 0;
+        currentCarStatus = 0;
 	printCarStatus(currentCarStatus);
 	delay(1000);  // Wait 1 second.
 	
@@ -195,7 +195,7 @@ void checkStopSwitch() {
 	// If it is, the state is LOW.
 	if(stopSwitchState != HIGH) {
 		currentCarStatus = 3;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 		while(stopSwitchState != HIGH) {
 			md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 			stopSwitchState = digitalRead(stopSwitchPin);
@@ -221,7 +221,7 @@ void checkObstacle() {
 	// If an object gets within 10 inches, the car stops.
 	if(inches < limit) {
 		currentCarStatus = 4;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 		while(inches < limit) {		
 			md.setBrakes(MAX_BRAKE, MAX_BRAKE);   // Stops the car.		
 			// Same averaging for sonar sensor as before.
@@ -233,7 +233,7 @@ void checkObstacle() {
 			sum    = 0;
 		}
 		currentCarStatus = 2;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 	}
         return;
 }
@@ -247,7 +247,7 @@ void checkCollision() {
 	if(collisionDetectState != HIGH) {
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 		currentCarStatus = 5;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 		md.setSpeeds(-200, -200);
 		delay(200);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
@@ -257,12 +257,12 @@ void checkCollision() {
 		overrideState = digitalRead(overridePin);
 		if(overrideState != HIGH) {
 			currentCarStatus = 6;
-	        printCarStatus(currentCarStatus);
+	                printCarStatus(currentCarStatus);
 			while(overrideState != HIGH) 
 				overrideState = digitalRead(overridePin);			
 		}
 		currentCarStatus = 2;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 	}
 	return;
 }
@@ -271,14 +271,14 @@ void checkCollision() {
 void stopIfFault() {
 	if (md.getM1Fault()) {
 		currentCarStatus = 7;
-	    printCarStatus(currentCarStatus);
+	        printCarStatus(currentCarStatus);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
 
   	if (md.getM2Fault()) {
-    	currentCarStatus = 8;
-	    printCarStatus(currentCarStatus);
+    	        currentCarStatus = 8;
+	        printCarStatus(currentCarStatus);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
