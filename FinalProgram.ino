@@ -161,6 +161,7 @@ void printCarStatus(int status) {
 		lcd.print("Motor 2 Fault");
 		break;
 	}
+	return;
 }
 
 // Runs the calibration mode.
