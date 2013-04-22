@@ -45,7 +45,10 @@ int avgrange             = 60; // Number of readings the sonar sensor averages f
 int sum                  = 0;  // Sum of inches for sonar sensing average.
 
 // Variable for reading the stop switch status.
-int stopSwitchState = 0;  
+int stopSwitchState = 0;
+
+// Variable that holds the status of the car.
+int currentCarStatus = 0;  
 
 // Variables used in the PID equation.
 int lastError = 0; // The error that was calculated in the previous iteration of the main loop. 
@@ -101,7 +104,6 @@ void loop() {
   	// Get calibrated sensor values returned in the sensors array, along with the line position.
   	// Position will range from 0 to 7000, with 4000 corresponding to the line over the middle sensor.
   	int position = qtrrc.readLine(sensors);
-  	unsigned char i;
  
   	error      = position - 3000;                        // How far the line is away from the middle sensor.
   	motorSpeed = KP * error + KD * (error - lastError);  // PID equation.
@@ -128,11 +130,44 @@ void loop() {
   	stopIfFault();
 }
 
+void printCarStatus(int status) {
+	lcd.clear();
+	switch(status) {
+	case 0:
+		lcd.print("Calibrating...");
+		break;
+	case 1:
+		lcd.print("Ready!");
+		break;
+	case 2:
+		lcd.print("Running...");
+		break;
+	case 3:
+		lcd.print("Stopped...");
+		break;
+	case 4:
+		lcd.print("Obstacle!");
+		break;
+	case 5:
+		lcd.print("Collision!");
+		break;
+	case 6:
+		lcd.print("Waiting...");
+		break;
+	case 7:
+		lcd.print("Motor 1 Fault");
+		break;
+	case 8:
+		lcd.print("Motor 2 Fault");
+		break;
+	}
+}
+
 // Runs the calibration mode.
 void calibrate() {
 	// Indicates on the LCD screen that the car is in calibration mode.
-        lcd.clear();
-        lcd.print("Calibrating...");
+    currentCarStatus = 0;
+	printCarStatus(currentCarStatus);
 	delay(1000);  // Wait 1 second.
 	
 	// The car spins in a circle to automatically calibrate.
@@ -144,11 +179,11 @@ void calibrate() {
   	}
 	md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 
-  	lcd.clear();
-        lcd.print("Ready!"); // Shows ready when calibration is done.
-	delay(2000);         // Waits 2 seconds before starting.
-	lcd.clear();
-	lcd.print("Running...");
+  	currentCarStatus = 1;
+	printCarStatus(currentCarStatus); // Shows ready when calibration is done.
+	delay(2000);                      // Waits 2 seconds before starting.
+	currentCarStatus = 2;
+	printCarStatus(currentCarStatus);
 	return;
 }
 
@@ -159,14 +194,14 @@ void checkStopSwitch() {
 	// Checks if the switch is ON.
 	// If it is, the state is LOW.
 	if(stopSwitchState != HIGH) {
-		lcd.clear();
-		lcd.print("Stopped...");
+		currentCarStatus = 3;
+	    printCarStatus(currentCarStatus);
 		while(stopSwitchState != HIGH) {
 			md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 			stopSwitchState = digitalRead(stopSwitchPin);
 		}
-		lcd.clear();
-		lcd.print("Running...");
+		currentCarStatus = 2;
+		printCarStatus(currentCarStatus);
 		return;
 	}
 }
@@ -185,8 +220,8 @@ void checkObstacle() {
     	
 	// If an object gets within 10 inches, the car stops.
 	if(inches < limit) {
-		lcd.clear();
-		lcd.print("Obstacle!");
+		currentCarStatus = 4;
+	    printCarStatus(currentCarStatus);
 		while(inches < limit) {		
 			md.setBrakes(MAX_BRAKE, MAX_BRAKE);   // Stops the car.		
 			// Same averaging for sonar sensor as before.
@@ -197,8 +232,8 @@ void checkObstacle() {
 			inches = sum/avgrange;
 			sum    = 0;
 		}
-		lcd.clear();
-		lcd.print("Running...");
+		currentCarStatus = 2;
+	    printCarStatus(currentCarStatus);
 	}
         return;
 }
@@ -211,8 +246,8 @@ void checkCollision() {
 	// If they are, the state is LOW.
 	if(collisionDetectState != HIGH) {
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
-		lcd.clear();
-                lcd.print("Collision!");
+		currentCarStatus = 5;
+	    printCarStatus(currentCarStatus);
 		md.setSpeeds(-200, -200);
 		delay(200);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
@@ -221,13 +256,13 @@ void checkCollision() {
 		// then provide input for the car to begin moving again.
 		overrideState = digitalRead(overridePin);
 		if(overrideState != HIGH) {
-			lcd.clear();
-			lcd.print("Waiting...");
+			currentCarStatus = 6;
+	        printCarStatus(currentCarStatus);
 			while(overrideState != HIGH) 
 				overrideState = digitalRead(overridePin);			
 		}
-		lcd.clear();
-		lcd.print("Running...");
+		currentCarStatus = 2;
+	    printCarStatus(currentCarStatus);
 	}
 	return;
 }
@@ -235,15 +270,15 @@ void checkCollision() {
 // Stops the motors if every other sensor has failed and there is a fault.
 void stopIfFault() {
 	if (md.getM1Fault()) {
-		lcd.clear();
-		lcd.print("Motor 1 Fault");
+		currentCarStatus = 7;
+	    printCarStatus(currentCarStatus);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
 
   	if (md.getM2Fault()) {
-    	lcd.clear();
-		lcd.print("Motor 2 Fault");
+    	currentCarStatus = 8;
+	    printCarStatus(currentCarStatus);
 		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
