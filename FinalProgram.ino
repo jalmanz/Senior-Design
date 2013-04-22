@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #define NUM_SENSORS 7 // Although we have 8 sensors, we used an odd number to make finding the middle easier.
 #define M_DEFAULT 200 // Default motor speed.
+#define MAX_BRAKE 400 // Maximum brake power.
 #define TIMEOUT 3000  // Time before sensor turns off.
 #define M_MAX 150     // Max motor speed.
 #define KP 0.2        // Proportial gain.
@@ -141,7 +142,7 @@ void calibrate() {
 		qtrrc.calibrate(); // Reads all sensors 50 times at 2500 us per read (i.e. ~25 ms per call).
     	        delay(5);
   	}
-	md.setBrakes(400, 400);
+	md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 
   	lcd.clear();
         lcd.print("Ready!"); // Shows ready when calibration is done.
@@ -161,7 +162,7 @@ void checkStopSwitch() {
 		lcd.clear();
 		lcd.print("Stopped...");
 		while(stopSwitchState != HIGH) {
-			md.setBrakes(400,400);
+			md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 			stopSwitchState = digitalRead(stopSwitchPin);
 		}
 		lcd.clear();
@@ -187,7 +188,7 @@ void checkObstacle() {
 		lcd.clear();
 		lcd.print("Obstacle!");
 		while(inches < limit) {		
-			md.setBrakes(400,400);   // Stops the car.		
+			md.setBrakes(MAX_BRAKE, MAX_BRAKE);   // Stops the car.		
 			// Same averaging for sonar sensor as before.
 			for(int i = 0; i < avgrange ; i++) {
 				anVolt = analogRead(sonar)/2;
@@ -209,12 +210,12 @@ void checkCollision() {
 	// Checks if the sensors have been activated.
 	// If they are, the state is LOW.
 	if(collisionDetectState != HIGH) {
-		md.setBrakes(400,400);
+		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 		lcd.clear();
                 lcd.print("Collision!");
 		md.setSpeeds(-200, -200);
 		delay(200);
-		md.setBrakes(400, 400);
+		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
 		
 		// This section is used for the hypothetical driver to wait for the obstacle to be moved,
 		// then provide input for the car to begin moving again.
@@ -236,14 +237,14 @@ void stopIfFault() {
 	if (md.getM1Fault()) {
 		lcd.clear();
 		lcd.print("Motor 1 Fault");
-		md.setBrakes(400,400);
+		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
 
   	if (md.getM2Fault()) {
     	lcd.clear();
 		lcd.print("Motor 2 Fault");
-		md.setBrakes(400,400);
+		md.setBrakes(MAX_BRAKE, MAX_BRAKE);
     	        while(1);
   	}
 }
