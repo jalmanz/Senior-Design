@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #define TIMEOUT 3000  // Time before sensor turns off.
 #define M_MAX 150     // Max motor speed.
 #define KP 0.2        // Proportial gain.
-#define KD 15  	  // Differential gain.
+#define KD 15  	      // Differential gain.
 
 
 // Variables for pins on the arduino board.
@@ -75,8 +75,8 @@ void setup() {
 	pinMode(stopSwitchPin, INPUT); // Initializes the digital pin for the stop switch.
 	pinMode(collisionPin, INPUT);  // Initializes the digital pin for the collision detector.
 	pinMode(overridePin, INPUT);   // Initializes the digital pin for the manual override.
-    lcd.begin();                   // Initializes the LCD Module.
-    lcd.setContrast(255);
+        lcd.begin();                   // Initializes the LCD Module.
+        lcd.setContrast(255);
 	lcd.setBrightness(255);
 
 	// Checks if the stop switch is toggled.
@@ -92,7 +92,7 @@ void loop() {
 	// Checks if the stop switch is toggled.
 	checkStopSwitch();
 
-    // Checks if there are any obstacles in the way of the car.
+        // Checks if there are any obstacles in the way of the car.
 	checkObstacle();
 
 	// Checks if the sonar sensor has missed an obstacle and a collision has been detected.
@@ -106,7 +106,7 @@ void loop() {
  
   	error      = position - 3000;
   	motorSpeed = KP * error + KD * (error - lastError);  // PID equation.
-    lastError  = error;
+        lastError  = error;
  
 	// Sets the motor speeds based on the PID equation.
   	m1Speed = M_DEFAULT + motorSpeed;
@@ -132,21 +132,21 @@ void loop() {
 // Runs the calibration mode.
 void calibrate() {
 	// Indicates on the LCD screen that the car is in calibration mode.
-    lcd.clear();
-    lcd.print("Calibrating...");
+        lcd.clear();
+        lcd.print("Calibrating...");
 	delay(1000);
 	
 	// The car spins in a circle to automatically calibrate.
 	md.setSpeeds(200, -200);
 	// Calibration lasts about 10 seconds.
-    for (i = 0; i < 50; i++) {
+        for (i = 0; i < 50; i++) {
 		qtrrc.calibrate(); // Reads all sensors 10 times at 2500 us per read (i.e. ~25 ms per call).
-    	delay(5);
+    	        delay(5);
   	}
 	md.setBrakes(400, 400);
 
   	lcd.clear();
-    lcd.print("Ready!"); // Shows ready when calibration is done.
+        lcd.print("Ready!"); // Shows ready when calibration is done.
 	delay(2000);         // Waits 2 seconds before starting.
 	lcd.clear();
 	lcd.print("Running...");
@@ -201,7 +201,7 @@ void checkObstacle() {
 		lcd.clear();
 		lcd.print("Running...");
 	}
-    return;
+        return;
 }
 
 // Checks if the collision sensors have been activated.
@@ -213,7 +213,7 @@ void checkCollision() {
 	if(collisionDetectState != HIGH) {
 		md.setBrakes(400,400);
 		lcd.clear();
-        lcd.print("Collision!");
+                lcd.print("Collision!");
 		md.setSpeeds(-200, -200);
 		delay(200);
 		md.setBrakes(400, 400);
@@ -239,13 +239,13 @@ void stopIfFault() {
 		lcd.clear();
 		lcd.print("Motor 1 Fault");
 		md.setBrakes(400,400);
-    	while(1);
+    	        while(1);
   	}
 
   	if (md.getM2Fault()) {
     	lcd.clear();
 		lcd.print("Motor 2 Fault");
 		md.setBrakes(400,400);
-    	while(1);
+    	        while(1);
   	}
 }
