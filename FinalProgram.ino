@@ -23,12 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include <Wire.h>
 
 #define NUM_SENSORS 7 // Although we have 8 sensors, we used an odd number to make finding the middle easier.
-#define M_DEFAULT 200 // Default motor speed.
+#define M_DEFAULT 100 // Default motor speed.
 #define MAX_BRAKE 400 // Maximum brake power.
 #define TIMEOUT 3000  // Time before sensor turns off.
 #define M_MAX 150     // Max motor speed.
 #define KP 0.2        // Proportial gain.
-#define KD 15  	      // Differential gain.
+#define KD 5  	      // Differential gain.
 
 // Variables for pins on the arduino board.
 const int stopSwitchPin  = 53; // Digital pin 53 used the stop switch pin.
@@ -172,7 +172,7 @@ void calibrate() {
 	delay(1000);  // Wait 1 second.
 	
 	// The car spins in a circle to automatically calibrate.
-	md.setSpeeds(200, -200);
+	md.setSpeeds(100, -100);
 	// Calibration lasts about 10 seconds.
         for (i = 0; i < 50; i++) {
 		qtrrc.calibrate(); // Reads all sensors 50 times at 2500 us per read (i.e. ~25 ms per call).
