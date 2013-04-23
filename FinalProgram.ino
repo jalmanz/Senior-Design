@@ -171,11 +171,21 @@ void calibrate() {
 	printCarStatus(currentCarStatus);
 	delay(1000);  // Wait 1 second.
 	
-	// The car spins in a circle to automatically calibrate.
+	// The car turns back and forth to automatically calibrate.
 	md.setSpeeds(100, -100);
 	// Calibration lasts about 10 seconds.
+        for (i = 0; i < 25; i++) {
+		qtrrc.calibrate(); // Reads all sensors 25 times at 2500 us per read (i.e. ~25 ms per call).
+    	        delay(5);
+  	}
+        md.setSpeeds(-100, 100);
         for (i = 0; i < 50; i++) {
 		qtrrc.calibrate(); // Reads all sensors 50 times at 2500 us per read (i.e. ~25 ms per call).
+    	        delay(5);
+  	}
+        md.setSpeeds(100, -100);
+        for (i = 0; i < 25; i++) {
+		qtrrc.calibrate(); // Reads all sensors 25 times at 2500 us per read (i.e. ~25 ms per call).
     	        delay(5);
   	}
 	md.setBrakes(MAX_BRAKE, MAX_BRAKE);
